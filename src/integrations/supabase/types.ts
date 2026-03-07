@@ -27,7 +27,7 @@ export type Database = {
           price: string
           rating: number
           review_count: number
-          seller_id: string
+          seller_id: string | null
           tags: string[]
           updated_at: string
         }
@@ -43,7 +43,7 @@ export type Database = {
           price: string
           rating?: number
           review_count?: number
-          seller_id: string
+          seller_id?: string | null
           tags?: string[]
           updated_at?: string
         }
@@ -59,7 +59,7 @@ export type Database = {
           price?: string
           rating?: number
           review_count?: number
-          seller_id?: string
+          seller_id?: string | null
           tags?: string[]
           updated_at?: string
         }
