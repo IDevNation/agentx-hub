@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -24,10 +26,7 @@ const Navbar = () => {
         <ul className="hidden md:flex gap-1 list-none">
           {navLinks.map((l) => (
             <li key={l.to}>
-              <Link
-                to={l.to}
-                className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3"
-              >
+              <Link to={l.to} className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3">
                 {l.label}
               </Link>
             </li>
@@ -35,12 +34,28 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-2">
-          <Link to="/buyer-dashboard" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
-            Dashboard
-          </Link>
-          <Link to="/marketplace" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
-            Browse Agents
-          </Link>
+          {user ? (
+            <>
+              <Link to="/buyer-dashboard" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
+                Dashboard
+              </Link>
+              <button
+                onClick={signOut}
+                className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-bg3 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut size={14} /> Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
+                Sign In
+              </Link>
+              <Link to="/signup" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
+                Get Started
+              </Link>
+            </>
+          )}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden flex flex-col gap-[5px] p-2 rounded-lg border border-border bg-bg3"
@@ -50,22 +65,25 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden fixed top-[60px] left-0 right-0 z-40 bg-bg2 border-b border-border flex flex-col p-4 pt-2">
           {navLinks.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={() => setMobileOpen(false)}
-              className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3"
-            >
+            <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3">
               {l.label}
             </Link>
           ))}
           <div className="flex gap-2 mt-3 pt-3 border-t border-border">
-            <Link to="/buyer-dashboard" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground">Dashboard</Link>
-            <Link to="/marketplace" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground">Browse</Link>
+            {user ? (
+              <>
+                <Link to="/buyer-dashboard" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground">Dashboard</Link>
+                <button onClick={() => { signOut(); setMobileOpen(false); }} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium bg-bg3 text-muted-foreground">Sign Out</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground">Sign In</Link>
+                <Link to="/signup" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground">Sign Up</Link>
+              </>
+            )}
           </div>
         </div>
       )}

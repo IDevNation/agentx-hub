@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import AgentCard from "@/components/AgentCard";
 
 const categories = ["All", "Security", "DeFi", "NFT", "Analytics"];
@@ -8,20 +9,46 @@ const sidebarCategories = [
 const pricingModels = ["💳 Pay Per Use", "📅 Subscription", "🆓 Free"];
 const ratings = ["⭐ 4.5+", "⭐ 4.0+", "⭐ Any"];
 
-const agents = [
-  { icon: "🔍", iconBg: "rgba(0,212,255,0.1)", name: "SmartAudit Agent", description: "Deep Solidity vulnerability scanner with 99 check types including reentrancy and access control.", tags: ["Security", "Solidity"], price: "$0.02/scan", rating: "⭐ 4.9" },
-  { icon: "📊", iconBg: "rgba(124,58,237,0.1)", name: "DeFi Analytics Pro", description: "Real-time liquidity, whale tracking, yield optimization across 15+ DeFi protocols.", tags: ["DeFi", "Analytics"], price: "$0.05/query", rating: "⭐ 4.7" },
-  { icon: "⚡", iconBg: "rgba(63,185,80,0.1)", name: "Gas Optimizer", description: "Rewrites smart contract code to minimize gas fees without changing functionality.", tags: ["Gas", "EVM"], price: "$0.03/contract", rating: "⭐ 4.8" },
-  { icon: "🪙", iconBg: "rgba(255,170,0,0.1)", name: "Token Sniper", description: "Identifies newly launched tokens with strong fundamentals and low rug-pull risk.", tags: ["Trading", "Token"], price: "$0.10/scan", rating: "⭐ 4.6" },
-  { icon: "🎨", iconBg: "rgba(0,212,255,0.08)", name: "NFT Valuator", description: "ML-based NFT price prediction using trait rarity, collection trends, and market sentiment.", tags: ["NFT", "ML"], price: "$0.01/valuation", rating: "⭐ 4.5" },
-  { icon: "🔐", iconBg: "rgba(124,58,237,0.08)", name: "Wallet Guard", description: "Monitors wallet addresses for suspicious activity, drainer contracts, and phishing attempts.", tags: ["Security", "Wallet"], price: "$2/month", rating: "⭐ 4.9" },
-];
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  icon_bg: string;
+  category: string;
+  tags: string[];
+  price: string;
+  rating: number;
+  review_count: number;
+}
 
 const Marketplace = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [activeCat, setActiveCat] = useState(0);
   const [activePricing, setActivePricing] = useState(0);
   const [activeRating, setActiveRating] = useState(0);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      const { data, error } = await supabase
+        .from("agents")
+        .select("*")
+        .eq("is_published", true)
+        .order("rating", { ascending: false });
+      if (!error && data) setAgents(data);
+      setLoading(false);
+    };
+    fetchAgents();
+  }, []);
+
+  const filtered = agents.filter((a) => {
+    if (activeFilter !== "All" && a.category !== activeFilter && !a.tags.includes(activeFilter)) return false;
+    if (search && !a.name.toLowerCase().includes(search.toLowerCase()) && !a.description.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="min-h-screen pt-[60px]">
@@ -30,7 +57,12 @@ const Marketplace = () => {
           <h1 className="font-display font-extrabold text-[clamp(1.75rem,3vw,2.5rem)] tracking-tight leading-tight">AI Agent Marketplace</h1>
           <p className="text-muted-foreground mt-2">Try any agent free. Pay only for what you use.</p>
           <div className="flex gap-2 mt-5 flex-wrap">
-            <input className="flex-1 min-w-[220px] px-4 py-2.5 rounded-lg border border-border bg-bg2 text-foreground text-sm font-body outline-none focus:border-primary placeholder:text-muted-foreground" placeholder="Search agents — e.g. 'smart contract audit'..." />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 min-w-[220px] px-4 py-2.5 rounded-lg border border-border bg-bg2 text-foreground text-sm font-body outline-none focus:border-primary placeholder:text-muted-foreground"
+              placeholder="Search agents — e.g. 'smart contract audit'..."
+            />
             {categories.map((c) => (
               <button
                 key={c}
@@ -50,7 +82,6 @@ const Marketplace = () => {
 
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 py-8">
-          {/* Sidebar */}
           <div className="hidden md:block sticky top-20 h-fit">
             <div className="mb-6">
               <div className="text-[0.72rem] font-semibold tracking-wider uppercase text-muted-foreground mb-3">Category</div>
@@ -72,17 +103,31 @@ const Marketplace = () => {
             </div>
           </div>
 
-          {/* Main */}
           <div>
             <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
-              <span className="text-sm text-muted-foreground">Showing 48 agents</span>
+              <span className="text-sm text-muted-foreground">Showing {filtered.length} agents</span>
               <select className="px-3 py-[7px] rounded-md border border-border bg-bg2 text-foreground text-xs font-body">
                 <option>Most Popular</option><option>Newest</option><option>Highest Rated</option><option>Lowest Price</option>
               </select>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {agents.map((a) => <AgentCard key={a.name} {...a} />)}
-            </div>
+            {loading ? (
+              <div className="text-center py-20 text-muted-foreground">Loading agents...</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map((a) => (
+                  <AgentCard
+                    key={a.id}
+                    icon={a.icon}
+                    iconBg={a.icon_bg}
+                    name={a.name}
+                    description={a.description}
+                    tags={a.tags}
+                    price={a.price}
+                    rating={`⭐ ${a.rating}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
