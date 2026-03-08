@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import ReviewSection from "@/components/ReviewSection";
+import { toast } from "sonner";
+
+const FREE_DEMO_LIMIT = 3;
 
 const options = [
   { id: 0, icon: "💳", title: "Pay Per Use", desc: "$0.02 per scan · No commitment" },
