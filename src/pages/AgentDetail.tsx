@@ -154,7 +154,7 @@ const AgentDetail = () => {
               <div className="font-display text-[2rem] font-extrabold mb-1">
                 {agent.price} <span className="text-base font-body text-muted-foreground font-normal">/ use</span>
               </div>
-              <div className="text-xs text-green-500 mb-6">✓ Try 3 scans completely free</div>
+              <div className={`text-xs mb-6 ${hasFreeDemos ? "text-green-500" : "text-destructive"}`}>{hasFreeDemos ? `✓ ${remainingDemos} free demo${remainingDemos !== 1 ? "s" : ""} remaining` : "✗ Free demos used"}</div>
 
               <div className="flex flex-col gap-2 mb-6">
                 {options.map((o) => (
