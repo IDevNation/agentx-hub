@@ -18,14 +18,14 @@ const Home = () => (
             🤖 AI Agent Marketplace
           </div>
           <h1 className="font-display font-extrabold text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.15] tracking-tight mb-4">
-            Discover AI Agents.<br />Pay Only <span className="text-primary">What You Use.</span>
+            The AI Agent<br /><span className="text-primary">Marketplace</span>
           </h1>
           <p className="text-muted-foreground text-base leading-[1.7] max-w-[520px]">
-            The first marketplace where you try before you buy. No locked subscriptions. Hundreds of specialized AI agents for Web3, DeFi, and beyond.
+            Try any agent free. Pay only for what you use.
           </p>
           <div className="flex gap-2.5 mt-8 flex-wrap">
             <Link to="/marketplace" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Agents →</Link>
-            <Link to="/pricing" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">See Pricing</Link>
+            <Link to="/signup" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List Your Agent →</Link>
           </div>
           <div className="flex gap-8 mt-10 flex-wrap">
             {[{ v: "200+", l: "AI Agents" }, { v: "5K+", l: "Developers" }, { v: "$0", l: "To Try" }].map((s) => (
