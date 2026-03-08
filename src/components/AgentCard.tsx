@@ -12,9 +12,9 @@ interface AgentCardProps {
   rating: string;
 }
 
-const AgentCard = ({ icon, iconBg, name, description, tags, price, tryFree = true, rating }: AgentCardProps) => (
+const AgentCard = ({ id, icon, iconBg, name, description, tags, price, tryFree = true, rating }: AgentCardProps) => (
   <Link
-    to="/agent-detail"
+    to={`/agent/${id}`}
     className="block bg-card border border-border rounded-[14px] p-6 transition-all cursor-pointer hover:border-primary hover:-translate-y-[3px] hover:shadow-[0_12px_40px_hsl(var(--primary)/0.08)]"
   >
     <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: iconBg }}>
