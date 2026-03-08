@@ -7,7 +7,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, role, signOut } = useAuth();
 
-  const dashboardPath = role === "seller" ? "/seller-dashboard" : "/buyer-dashboard";
+  const dashboardPath = "/dashboard";
 
   const navLinks = [
     { to: "/", label: "Home" },
