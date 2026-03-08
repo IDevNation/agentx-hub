@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 interface AgentCardProps {
+  id: string;
   icon: string;
   iconBg: string;
   name: string;
