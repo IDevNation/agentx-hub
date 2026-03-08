@@ -35,7 +35,7 @@ const Signup = () => {
     }
     setLoading(false);
     toast({ title: "Account created!", description: "Check your email to confirm your account." });
-    navigate("/login");
+    navigate(role === "seller" ? "/seller-dashboard" : "/login");
   };
 
   const handleGoogleSignup = async () => {
