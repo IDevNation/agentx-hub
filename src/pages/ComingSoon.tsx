@@ -4,11 +4,11 @@ import { Github } from "lucide-react";
 const ComingSoon = () => {
   const [email, setEmail] = useState("");
   const [joined, setJoined] = useState(false);
-  const [countdown, setCountdown] = useState({ d: "47", h: "00", m: "00", s: "00" });
+  const [countdown, setCountdown] = useState({ d: "30", h: "00", m: "00", s: "00" });
 
   useEffect(() => {
     const launch = new Date();
-    launch.setDate(launch.getDate() + 47);
+    launch.setDate(launch.getDate() + 30);
     const tick = () => {
       const diff = launch.getTime() - Date.now();
       setCountdown({
