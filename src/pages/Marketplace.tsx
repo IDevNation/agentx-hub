@@ -117,6 +117,7 @@ const Marketplace = () => {
                 {filtered.map((a) => (
                   <AgentCard
                     key={a.id}
+                    id={a.id}
                     icon={a.icon}
                     iconBg={a.icon_bg}
                     name={a.name}
