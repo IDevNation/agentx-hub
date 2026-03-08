@@ -1,9 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import ReviewSection from "@/components/ReviewSection";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const FREE_DEMO_LIMIT = 3;
 
@@ -26,6 +33,23 @@ interface Agent {
   review_count: number;
 }
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+const loadRazorpayScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) { resolve(true); return; }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -34,6 +58,8 @@ const AgentDetail = () => {
   const [loading, setLoading] = useState(true);
   const [demosUsed, setDemosUsed] = useState(0);
   const [demoLoading, setDemoLoading] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
     const fetchAgent = async () => {
@@ -62,10 +88,7 @@ const AgentDetail = () => {
   const hasFreeDemos = remainingDemos > 0;
 
   const handleRunDemo = async () => {
-    if (!user) {
-      toast.error("Please sign in to run the demo");
-      return;
-    }
+    if (!user) { toast.error("Please sign in to run the demo"); return; }
     if (!hasFreeDemos) return;
     if (!id) return;
 
@@ -79,6 +102,89 @@ const AgentDetail = () => {
     }
     setDemoLoading(false);
   };
+
+  const parsePrice = (priceStr: string): number => {
+    const num = parseFloat(priceStr.replace(/[^0-9.]/g, ""));
+    return isNaN(num) ? 99 : num;
+  };
+
+  const handlePayment = useCallback(async () => {
+    if (!user || !agent || !id) return;
+
+    setPaymentLoading(true);
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      toast.error("Failed to load payment gateway");
+      setPaymentLoading(false);
+      return;
+    }
+
+    const amount = parsePrice(agent.price);
+
+    // Get session token
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
+    if (!token) {
+      toast.error("Please sign in to make a payment");
+      setPaymentLoading(false);
+      return;
+    }
+
+    // Create order via edge function
+    const { data, error } = await supabase.functions.invoke("create-razorpay-order", {
+      body: { agent_id: id, amount, agent_name: agent.name },
+    });
+
+    if (error || !data?.order_id) {
+      toast.error("Failed to create payment order");
+      setPaymentLoading(false);
+      return;
+    }
+
+    const razorpayOptions = {
+      key: data.key_id,
+      amount: data.amount,
+      currency: data.currency,
+      name: "Agent Marketplace",
+      description: `Purchase: ${agent.name}`,
+      order_id: data.order_id,
+      handler: async (response: any) => {
+        // Record transaction
+        const { error: txError } = await supabase.from("transactions").insert({
+          agent_id: id,
+          buyer_id: user.id,
+          action: "purchase",
+          cost: amount,
+          status: "complete",
+        });
+        if (txError) {
+          toast.error("Payment recorded but failed to save transaction");
+        } else {
+          toast.success("Payment successful! You now have access to this agent.");
+        }
+        setPaymentModalOpen(false);
+      },
+      modal: {
+        ondismiss: () => {
+          setPaymentLoading(false);
+        },
+      },
+      prefill: {
+        email: user.email,
+      },
+      theme: {
+        color: "#6366f1",
+      },
+    };
+
+    const rzp = new window.Razorpay(razorpayOptions);
+    rzp.on("payment.failed", (resp: any) => {
+      toast.error("Payment failed: " + (resp.error?.description || "Unknown error"));
+    });
+    rzp.open();
+    setPaymentLoading(false);
+    setPaymentModalOpen(false);
+  }, [user, agent, id]);
 
   if (loading) return <div className="min-h-screen pt-[60px] flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!agent) return <div className="min-h-screen pt-[60px] flex items-center justify-center text-muted-foreground">Agent not found</div>;
@@ -134,10 +240,10 @@ const AgentDetail = () => {
                     <p className="text-foreground font-semibold mb-2">Free demos used up</p>
                     <p className="text-muted-foreground text-sm mb-4">Upgrade to continue using this agent.</p>
                     <button
-                      onClick={() => setSelected(0)}
+                      onClick={() => setPaymentModalOpen(true)}
                       className="px-6 py-2.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
                     >
-                      Choose a Plan
+                      Pay ₹{parsePrice(agent.price)} to Continue
                     </button>
                   </div>
                 )}
@@ -152,7 +258,7 @@ const AgentDetail = () => {
           <div>
             <div className="sticky top-20 bg-card border border-border rounded-2xl p-6">
               <div className="font-display text-[2rem] font-extrabold mb-1">
-                {agent.price} <span className="text-base font-body text-muted-foreground font-normal">/ use</span>
+                ₹{parsePrice(agent.price)} <span className="text-base font-body text-muted-foreground font-normal">/ use</span>
               </div>
               <div className={`text-xs mb-6 ${hasFreeDemos ? "text-green-500" : "text-destructive"}`}>{hasFreeDemos ? `✓ ${remainingDemos} free demo${remainingDemos !== 1 ? "s" : ""} remaining` : "✗ Free demos used"}</div>
 
@@ -171,18 +277,63 @@ const AgentDetail = () => {
                 ))}
               </div>
 
-              <button className="w-full px-4 py-3 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity mb-2">Start Free Demo</button>
+              {hasFreeDemos ? (
+                <button
+                  onClick={handleRunDemo}
+                  disabled={demoLoading}
+                  className="w-full px-4 py-3 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity mb-2 disabled:opacity-50"
+                >
+                  {demoLoading ? "Running..." : "Start Free Demo"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setPaymentModalOpen(true)}
+                  className="w-full px-4 py-3 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity mb-2"
+                >
+                  Pay ₹{parsePrice(agent.price)} Now
+                </button>
+              )}
               <button className="w-full px-4 py-3 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">Add to Workspace</button>
 
               <div className="mt-6 pt-6 border-t border-border text-xs text-muted-foreground flex flex-col gap-1.5">
                 <span>✓ No credit card for demo</span>
                 <span>✓ Pay only what you use</span>
-                <span>✓ On-chain verified reviews</span>
+                <span>✓ Secure Razorpay checkout</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Purchase Access</DialogTitle>
+            <DialogDescription>
+              Pay ₹{agent ? parsePrice(agent.price) : 0} to get full access to {agent?.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ background: agent?.icon_bg }}>{agent?.icon}</div>
+              <div>
+                <p className="font-semibold text-sm">{agent?.name}</p>
+                <p className="text-xs text-muted-foreground">{agent?.category}</p>
+              </div>
+              <div className="ml-auto font-bold text-lg">₹{agent ? parsePrice(agent.price) : 0}</div>
+            </div>
+            <button
+              onClick={handlePayment}
+              disabled={paymentLoading}
+              className="w-full px-4 py-3 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {paymentLoading ? "Processing..." : `Pay ₹${agent ? parsePrice(agent.price) : 0} with Razorpay`}
+            </button>
+            <p className="text-center text-xs text-muted-foreground">Secured by Razorpay · INR payments</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
