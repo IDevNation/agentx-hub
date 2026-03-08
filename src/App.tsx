@@ -10,8 +10,7 @@ import Home from "./pages/Home";
 import Marketplace from "./pages/Marketplace";
 import AgentDetail from "./pages/AgentDetail";
 import Pricing from "./pages/Pricing";
-import BuyerDashboard from "./pages/BuyerDashboard";
-import SellerDashboard from "./pages/SellerDashboard";
+import Dashboard from "./pages/Dashboard";
 import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -34,8 +33,9 @@ const App = () => (
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/agent-detail" element={<AgentDetail />} />
             <Route path="/pricing" element={<Pricing />} />
-            <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
-            <Route path="/seller-dashboard" element={<SellerDashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/buyer-dashboard" element={<Dashboard />} />
+            <Route path="/seller-dashboard" element={<Dashboard />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
