@@ -65,6 +65,35 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_usage: {
+        Row: {
+          agent_id: string
+          id: string
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          id?: string
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          id?: string
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_usage_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
