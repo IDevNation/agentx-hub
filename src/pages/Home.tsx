@@ -3,9 +3,9 @@ import AgentCard from "@/components/AgentCard";
 import Footer from "@/components/Footer";
 
 const agents = [
-  { icon: "🔍", iconBg: "rgba(0,212,255,0.1)", name: "SmartAudit Agent", description: "Automatically scans Solidity contracts for reentrancy, overflow, and access control vulnerabilities.", tags: ["Security", "Solidity", "Web3"], price: "$0.02/scan", rating: "⭐ 4.9 (128)" },
-  { icon: "📊", iconBg: "rgba(124,58,237,0.1)", name: "DeFi Analytics Pro", description: "Real-time liquidity analysis, whale tracking, and yield optimization across 15+ protocols.", tags: ["DeFi", "Analytics"], price: "$0.05/query", rating: "⭐ 4.7 (89)" },
-  { icon: "⚡", iconBg: "rgba(63,185,80,0.1)", name: "Gas Optimizer", description: "Analyzes and rewrites smart contract code to minimize gas usage without changing functionality.", tags: ["Gas", "EVM"], price: "$0.03/contract", rating: "⭐ 4.8 (204)" },
+  { id: "demo-1", icon: "🔍", iconBg: "rgba(0,212,255,0.1)", name: "SmartAudit Agent", description: "Automatically scans Solidity contracts for reentrancy, overflow, and access control vulnerabilities.", tags: ["Security", "Solidity", "Web3"], price: "$0.02/scan", rating: "⭐ 4.9 (128)" },
+  { id: "demo-2", icon: "📊", iconBg: "rgba(124,58,237,0.1)", name: "DeFi Analytics Pro", description: "Real-time liquidity analysis, whale tracking, and yield optimization across 15+ protocols.", tags: ["DeFi", "Analytics"], price: "$0.05/query", rating: "⭐ 4.7 (89)" },
+  { id: "demo-3", icon: "⚡", iconBg: "rgba(63,185,80,0.1)", name: "Gas Optimizer", description: "Analyzes and rewrites smart contract code to minimize gas usage without changing functionality.", tags: ["Gas", "EVM"], price: "$0.03/contract", rating: "⭐ 4.8 (204)" },
 ];
 
 const Home = () => (
