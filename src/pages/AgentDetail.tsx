@@ -110,14 +110,37 @@ const AgentDetail = () => {
             <div className="mb-8">
               <h3 className="font-display font-bold mb-4">Live Demo — Free</h3>
               <div className="bg-card border border-border rounded-xl p-6">
-                <textarea
-                  className="w-full bg-background border border-border rounded-lg p-4 text-foreground text-sm font-mono resize-y min-h-[120px] outline-none focus:border-primary placeholder:text-muted-foreground"
-                  placeholder="// Paste your input here to try for free..."
-                />
-                <div className="flex gap-3 mt-4 flex-wrap items-center">
-                  <button className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">▶ Run Free Demo</button>
-                  <span className="text-xs text-muted-foreground">3 free scans remaining</span>
-                </div>
+                {hasFreeDemos ? (
+                  <>
+                    <textarea
+                      className="w-full bg-background border border-border rounded-lg p-4 text-foreground text-sm font-mono resize-y min-h-[120px] outline-none focus:border-primary placeholder:text-muted-foreground"
+                      placeholder="// Paste your input here to try for free..."
+                    />
+                    <div className="flex gap-3 mt-4 flex-wrap items-center">
+                      <button
+                        onClick={handleRunDemo}
+                        disabled={demoLoading}
+                        className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
+                      >
+                        {demoLoading ? "Running..." : "▶ Run Free Demo"}
+                      </button>
+                      <span className="text-xs text-muted-foreground">
+                        {remainingDemos} free demo{remainingDemos !== 1 ? "s" : ""} remaining
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-foreground font-semibold mb-2">Free demos used up</p>
+                    <p className="text-muted-foreground text-sm mb-4">Upgrade to continue using this agent.</p>
+                    <button
+                      onClick={() => setSelected(0)}
+                      className="px-6 py-2.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+                    >
+                      Choose a Plan
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
