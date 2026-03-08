@@ -28,9 +28,12 @@ interface Agent {
 
 const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const [selected, setSelected] = useState(0);
   const [agent, setAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [demosUsed, setDemosUsed] = useState(0);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   useEffect(() => {
     const fetchAgent = async () => {
@@ -41,6 +44,41 @@ const AgentDetail = () => {
     };
     fetchAgent();
   }, [id]);
+
+  useEffect(() => {
+    const fetchDemoUsage = async () => {
+      if (!user || !id) return;
+      const { count } = await supabase
+        .from("demo_usage")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("agent_id", id);
+      setDemosUsed(count ?? 0);
+    };
+    fetchDemoUsage();
+  }, [user, id]);
+
+  const remainingDemos = FREE_DEMO_LIMIT - demosUsed;
+  const hasFreeDemos = remainingDemos > 0;
+
+  const handleRunDemo = async () => {
+    if (!user) {
+      toast.error("Please sign in to run the demo");
+      return;
+    }
+    if (!hasFreeDemos) return;
+    if (!id) return;
+
+    setDemoLoading(true);
+    const { error } = await supabase.from("demo_usage").insert({ user_id: user.id, agent_id: id });
+    if (error) {
+      toast.error("Failed to run demo");
+    } else {
+      setDemosUsed((prev) => prev + 1);
+      toast.success("Demo executed successfully!");
+    }
+    setDemoLoading(false);
+  };
 
   if (loading) return <div className="min-h-screen pt-[60px] flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!agent) return <div className="min-h-screen pt-[60px] flex items-center justify-center text-muted-foreground">Agent not found</div>;
