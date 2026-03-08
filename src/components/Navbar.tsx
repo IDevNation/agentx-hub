@@ -5,7 +5,9 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
+
+  const dashboardPath = role === "seller" ? "/seller-dashboard" : "/buyer-dashboard";
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -36,7 +38,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           {user ? (
             <>
-              <Link to="/buyer-dashboard" className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
+              <Link to={dashboardPath} className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
                 Dashboard
               </Link>
               <button
@@ -75,7 +77,7 @@ const Navbar = () => {
           <div className="flex gap-2 mt-3 pt-3 border-t border-border">
             {user ? (
               <>
-                <Link to="/buyer-dashboard" onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground">Dashboard</Link>
+                <Link to={dashboardPath} onClick={() => setMobileOpen(false)} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground">Dashboard</Link>
                 <button onClick={() => { signOut(); setMobileOpen(false); }} className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-medium bg-bg3 text-muted-foreground">Sign Out</button>
               </>
             ) : (

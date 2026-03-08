@@ -11,15 +11,21 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const redirectToDashboard = async (userId: string) => {
+    const { data } = await supabase.from("profiles").select("role").eq("user_id", userId).single();
+    const role = data?.role || "buyer";
+    navigate(role === "seller" ? "/seller-dashboard" : "/buyer-dashboard");
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      navigate("/buyer-dashboard");
+    } else if (data.user) {
+      await redirectToDashboard(data.user.id);
     }
   };
 

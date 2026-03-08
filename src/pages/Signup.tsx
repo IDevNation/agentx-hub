@@ -8,6 +8,7 @@ const Signup = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"buyer" | "seller">("buyer");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -15,24 +16,31 @@ const Signup = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, role },
         emailRedirectTo: window.location.origin,
       },
     });
-    setLoading(false);
     if (error) {
       toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Account created!", description: "Check your email to confirm your account." });
-      navigate("/login");
+      setLoading(false);
+      return;
     }
+    // Update profile role after signup
+    if (data.user) {
+      await supabase.from("profiles").update({ role }).eq("user_id", data.user.id);
+    }
+    setLoading(false);
+    toast({ title: "Account created!", description: "Check your email to confirm your account." });
+    navigate("/login");
   };
 
   const handleGoogleSignup = async () => {
+    // Store selected role in localStorage so we can apply it after OAuth redirect
+    localStorage.setItem("signup_role", role);
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + "/buyer-dashboard",
@@ -50,6 +58,39 @@ const Signup = () => {
           <div className="text-center mb-8">
             <h1 className="font-display font-extrabold text-2xl mb-2">Create Account</h1>
             <p className="text-muted-foreground text-sm">Join AgentX and start using AI agents</p>
+          </div>
+
+          {/* Role Selector */}
+          <div className="mb-6">
+            <label className="block text-sm text-muted-foreground mb-2">I want to</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setRole("buyer")}
+                className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-sm font-medium ${
+                  role === "buyer"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-bg2 text-muted-foreground hover:border-muted-foreground"
+                }`}
+              >
+                <span className="text-2xl">🛒</span>
+                <span>Use Agents</span>
+                <span className="text-xs font-normal opacity-70">Browse & pay per use</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("seller")}
+                className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-sm font-medium ${
+                  role === "seller"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-bg2 text-muted-foreground hover:border-muted-foreground"
+                }`}
+              >
+                <span className="text-2xl">🚀</span>
+                <span>Sell Agents</span>
+                <span className="text-xs font-normal opacity-70">List & earn revenue</span>
+              </button>
+            </div>
           </div>
 
           <button
@@ -107,7 +148,7 @@ const Signup = () => {
               disabled={loading}
               className="w-full py-3 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Creating account..." : `Create ${role === "seller" ? "Seller" : "Buyer"} Account`}
             </button>
           </form>
 
