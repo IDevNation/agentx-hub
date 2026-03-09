@@ -6,8 +6,24 @@ import { useAuth } from "@/contexts/AuthContext";
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const dashboardPath = "/dashboard";
+
+  const handleNavClick = (to: string) => {
+    if (to.includes("#")) {
+      const hash = to.split("#")[1];
+      if (location.pathname === "/") {
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  };
 
   const navLinks = [
     { to: "/", label: "Home" },
