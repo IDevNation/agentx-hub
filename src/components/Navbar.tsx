@@ -46,7 +46,7 @@ const Navbar = () => {
         <ul className="hidden md:flex gap-1 list-none">
           {navLinks.map((l) => (
             <li key={l.to}>
-              <Link to={l.to} className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3">
+              <Link to={l.to} onClick={(e) => { if (l.to.includes("#")) { e.preventDefault(); handleNavClick(l.to); } }} className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3">
                 {l.label}
               </Link>
             </li>
