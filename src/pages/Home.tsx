@@ -102,6 +102,87 @@ const Home = () => (
       </div>
     </section>
 
+    {/* Acquire Portal */}
+    <section id="acquire" className="grid-bg py-20">
+      <div className="container relative z-10">
+        <div className="max-w-[680px] mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary uppercase tracking-wider mb-6">
+            🤝 Acquire & Exit
+          </div>
+          <h2 className="font-display font-extrabold text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.15] tracking-tight mb-4">
+            Acquire an AI Project
+          </h2>
+          <p className="text-muted-foreground text-base leading-[1.7] max-w-[520px]">
+            Buy entire AI startups, SaaS tools, or agent businesses. Verified financials, escrow-protected deals.
+          </p>
+          <div className="flex gap-2.5 mt-8 flex-wrap">
+            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Acquisitions →</Link>
+            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List Your Project →</Link>
+          </div>
+          <div className="flex gap-8 mt-10 flex-wrap">
+            {[{ v: "48+", l: "Active Listings" }, { v: "$10K", l: "Starting Deal Size" }, { v: "100%", l: "Escrow Protected" }].map((s) => (
+              <div key={s.l}><h3 className="font-display text-[1.75rem] font-extrabold">{s.v}</h3><p className="text-xs text-muted-foreground">{s.l}</p></div>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { icon: "🏢", title: "Verified Projects", desc: "Due diligence docs, revenue proof, and financials verified before listing." },
+            { icon: "🔒", title: "Escrow Protection", desc: "Funds held securely until deal is complete. Zero risk transfers." },
+            { icon: "📊", title: "Deal Room Access", desc: "Private data room with NDA for serious buyers only." },
+          ].map((c) => (
+            <div key={c.title} className="bg-bg3 border border-primary/20 rounded-2xl p-6">
+              <div className="text-2xl mb-3">{c.icon}</div>
+              <h4 className="font-display font-bold text-sm mb-2">{c.title}</h4>
+              <p className="text-[0.825rem] text-muted-foreground leading-relaxed">{c.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Investor Portal */}
+    <section id="invest" className="bg-bg2 border-t border-b border-border py-20">
+      <div className="container">
+        <div className="max-w-[680px] mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary uppercase tracking-wider mb-6">
+            💰 Invest
+          </div>
+          <h2 className="font-display font-extrabold text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.15] tracking-tight mb-4">
+            Invest in AI Projects
+          </h2>
+          <p className="text-muted-foreground text-base leading-[1.7] max-w-[520px]">
+            Small investor friendly. Enter from $5,000. Exit anytime via our P2P secondary market.
+          </p>
+          <div className="flex gap-2.5 mt-8 flex-wrap">
+            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Opportunities →</Link>
+            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List for Investment →</Link>
+          </div>
+          <div className="flex gap-8 mt-10 flex-wrap">
+            {[{ v: "$5K", l: "Minimum Entry" }, { v: "$50K", l: "Maximum Ticket" }, { v: "P2P", l: "Liquid Exit Market" }].map((s) => (
+              <div key={s.l}><h3 className="font-display text-[1.75rem] font-extrabold">{s.v}</h3><p className="text-xs text-muted-foreground">{s.l}</p></div>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { icon: "📈", title: "Revenue Share", desc: "Earn monthly from project revenue. Transparent dashboard updated live." },
+            { icon: "🔄", title: "Exit Anytime", desc: "Sell your stake on our P2P secondary market to other investors." },
+            { icon: "🛡️", title: "Investor Protection", desc: "Quarterly buyback option and project health AI scoring included." },
+          ].map((c) => (
+            <div key={c.title} className="bg-bg3 border border-primary/20 rounded-2xl p-6">
+              <div className="text-2xl mb-3">{c.icon}</div>
+              <h4 className="font-display font-bold text-sm mb-2">{c.title}</h4>
+              <p className="text-[0.825rem] text-muted-foreground leading-relaxed">{c.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 rounded-xl bg-primary px-6 py-4 text-center">
+          <p className="text-sm font-semibold text-primary-foreground">🚀 AgentX is the only AI marketplace with built-in investor liquidity — enter small, exit smart.</p>
+        </div>
+      </div>
+    </section>
+
     <Footer />
   </div>
 );
