@@ -5,10 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Navbar from "./components/Navbar";
-import ComingSoon from "./pages/ComingSoon";
 import Home from "./pages/Home";
 import Marketplace from "./pages/Marketplace";
 import AgentDetail from "./pages/AgentDetail";
+import Acquire from "./pages/Acquire";
+import AcquireDealRoom from "./pages/AcquireDealRoom";
+import AcquireList from "./pages/AcquireList";
+import Invest from "./pages/Invest";
+import InvestList from "./pages/InvestList";
 import Pricing from "./pages/Pricing";
 import Dashboard from "./pages/Dashboard";
 import Blog from "./pages/Blog";
@@ -29,9 +33,13 @@ const App = () => (
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/agent/:id" element={<AgentDetail />} />
+            <Route path="/acquire" element={<Acquire />} />
+            <Route path="/acquire/list" element={<AcquireList />} />
+            <Route path="/acquire/:id" element={<AcquireDealRoom />} />
+            <Route path="/invest" element={<Invest />} />
+            <Route path="/invest/list" element={<InvestList />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/buyer-dashboard" element={<Dashboard />} />

@@ -28,8 +28,8 @@ const Navbar = () => {
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/marketplace", label: "Marketplace" },
-    { to: "/#acquire", label: "Acquire" },
-    { to: "/#invest", label: "Invest" },
+    { to: "/acquire", label: "Acquire" },
+    { to: "/invest", label: "Invest" },
     { to: "/pricing", label: "Pricing" },
     { to: "/blog", label: "Blog" },
     { to: "/contact", label: "Contact" },
@@ -38,7 +38,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 h-[60px] bg-nav border-b border-border flex items-center justify-between px-6 backdrop-blur-xl">
-        <Link to="/coming-soon" className="font-display font-extrabold text-lg text-foreground flex items-center gap-2">
+        <Link to="/" className="font-display font-extrabold text-lg text-foreground flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))] animate-pulse-dot" />
           AgentX
         </Link>
@@ -59,10 +59,7 @@ const Navbar = () => {
               <Link to={dashboardPath} className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground transition-colors hover:border-primary hover:text-primary">
                 Dashboard
               </Link>
-              <button
-                onClick={signOut}
-                className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-bg3 text-muted-foreground hover:text-foreground transition-colors"
-              >
+              <button onClick={signOut} className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-bg3 text-muted-foreground hover:text-foreground transition-colors">
                 <LogOut size={14} /> Sign Out
               </button>
             </>
@@ -76,10 +73,7 @@ const Navbar = () => {
               </Link>
             </>
           )}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex flex-col gap-[5px] p-2 rounded-lg border border-border bg-bg3"
-          >
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden flex flex-col gap-[5px] p-2 rounded-lg border border-border bg-bg3">
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
