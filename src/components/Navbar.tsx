@@ -88,7 +88,7 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden fixed top-[60px] left-0 right-0 z-40 bg-bg2 border-b border-border flex flex-col p-4 pt-2">
           {navLinks.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3">
+            <Link key={l.to} to={l.to} onClick={(e) => { if (l.to.includes("#")) { e.preventDefault(); handleNavClick(l.to); } setMobileOpen(false); }} className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3">
               {l.label}
             </Link>
           ))}
