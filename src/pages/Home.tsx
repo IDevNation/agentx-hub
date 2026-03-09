@@ -116,8 +116,8 @@ const Home = () => (
             Buy entire AI startups, SaaS tools, or agent businesses. Verified financials, escrow-protected deals.
           </p>
           <div className="flex gap-2.5 mt-8 flex-wrap">
-            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Acquisitions →</Link>
-            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List Your Project →</Link>
+            <Link to="/acquire" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Acquisitions →</Link>
+            <Link to="/acquire/list" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List Your Project →</Link>
           </div>
           <div className="flex gap-8 mt-10 flex-wrap">
             {[{ v: "48+", l: "Active Listings" }, { v: "$10K", l: "Starting Deal Size" }, { v: "100%", l: "Escrow Protected" }].map((s) => (
@@ -155,8 +155,8 @@ const Home = () => (
             Small investor friendly. Enter from $5,000. Exit anytime via our P2P secondary market.
           </p>
           <div className="flex gap-2.5 mt-8 flex-wrap">
-            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Opportunities →</Link>
-            <Link to="/coming-soon" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List for Investment →</Link>
+            <Link to="/invest" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">Browse Opportunities →</Link>
+            <Link to="/invest/list" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:border-primary hover:text-primary transition-colors">List for Investment →</Link>
           </div>
           <div className="flex gap-8 mt-10 flex-wrap">
             {[{ v: "$5K", l: "Minimum Entry" }, { v: "$50K", l: "Maximum Ticket" }, { v: "P2P", l: "Liquid Exit Market" }].map((s) => (
