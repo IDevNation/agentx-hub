@@ -1,17 +1,35 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const dashboardPath = "/dashboard";
+
+  const handleNavClick = (to: string) => {
+    if (to.includes("#")) {
+      const hash = to.split("#")[1];
+      if (location.pathname === "/") {
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  };
 
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/marketplace", label: "Marketplace" },
+    { to: "/#acquire", label: "Acquire" },
+    { to: "/#invest", label: "Invest" },
     { to: "/pricing", label: "Pricing" },
     { to: "/blog", label: "Blog" },
     { to: "/contact", label: "Contact" },
@@ -28,7 +46,7 @@ const Navbar = () => {
         <ul className="hidden md:flex gap-1 list-none">
           {navLinks.map((l) => (
             <li key={l.to}>
-              <Link to={l.to} className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3">
+              <Link to={l.to} onClick={(e) => { if (l.to.includes("#")) { e.preventDefault(); handleNavClick(l.to); } }} className="text-muted-foreground text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-bg3">
                 {l.label}
               </Link>
             </li>
@@ -70,7 +88,7 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden fixed top-[60px] left-0 right-0 z-40 bg-bg2 border-b border-border flex flex-col p-4 pt-2">
           {navLinks.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3">
+            <Link key={l.to} to={l.to} onClick={(e) => { if (l.to.includes("#")) { e.preventDefault(); handleNavClick(l.to); } setMobileOpen(false); }} className="text-muted-foreground text-sm font-medium p-3 rounded-lg transition-colors hover:text-foreground hover:bg-bg3">
               {l.label}
             </Link>
           ))}
